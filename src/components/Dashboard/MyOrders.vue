@@ -61,7 +61,7 @@
             
           </th>
           <td scope="row" class="text-center"> 
-              <router-link to="#"><i class="bi bi-file-text-fill"></i></router-link>  
+              <router-link :to="{name:'orderViewDetails', params:{orderId:order.id}}"><i class="bi bi-file-text-fill"></i></router-link>  
            </td>
            
         </tr>

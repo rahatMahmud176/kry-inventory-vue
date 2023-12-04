@@ -106,6 +106,7 @@
 <script>
 
 import axios from 'axios';
+import {axiosPrivet} from "../my-services/axiosInstance"; 
 
 export default {
   data : ()=>({
@@ -133,7 +134,7 @@ export default {
   methods:{
     formHandel(){ 
       this.orderPlacing = true;
-        axios.post('http://127.0.0.1:8000/api/form-order-submit',this.input)
+      axiosPrivet.post('form-order-submit-by-admin',this.input)
               .then((res)=>{
                   // console.log(res);
                   toastr.success('order Place Successfully');
@@ -166,7 +167,12 @@ export default {
 .card-footer{
   background: #04138b; 
 }
-.my-font, .card{
+.my-font{
   font-family: myFont;
 }
+/* .my-font, .card{
+  font-family: myFont;
+} */
+
+
 </style>
