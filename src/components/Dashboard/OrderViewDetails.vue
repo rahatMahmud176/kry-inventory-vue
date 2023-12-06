@@ -41,30 +41,49 @@
             <div class="card-header">Customer Information</div>
             <div class="card-body">
 
-              <h5 class="card-title">{{ customer.customerName }}</h5>
-               {{ customer.phoneNumber }} <br> {{ customer.email }} <br>
-               <span class="text-primary">{{ customer.addressLine }}, {{ customer.district }}, {{ customer.division }}</span>
-            </div>
 
-            <form action="" >
+              <form action=""  v-if="editingCustomerInfo">
                 <input v-model="customer.customerName" type="text" class="form-control my-1" >
                 <input v-model="customer.phoneNumber" type="text" class="form-control my-1" >
                 <input v-model="customer.email" type="text" class="form-control my-1" >
                 <input v-model="customer.addressLine" type="text" class="form-control my-1">
                 <input v-model="customer.district" type="text" class="form-control my-1">
                 <input v-model="customer.division" type="text" class="form-control my-1"> 
-                <button class="btn btn-warning my-1 w-100">Update</button>
+                <button type="button" class="btn btn-warning my-1 w-100" v-on:click="orderUpdate">Update</button>
             </form>
 
+           <div class="customer-info-container" v-else>
+              <h5 class="card-title">{{ customer.customerName }}</h5>
+                {{ customer.phoneNumber }} <br> {{ customer.email }} <br>
+                <span class="text-primary">{{ customer.addressLine }}, {{ customer.district }}, {{ customer.division }}</span>
+              </div>
+           </div>
+
+          
+
             <div class="card-footer">
-              <a href="#">Edit</a>
+              <a v-if="!editingCustomerInfo" v-on:click="customerInfoEditBtn" href="#">Edit</a>
+              <a v-else href="#" v-on:click="customerInfoEditBtn" >Back</a>
             </div>
           </div><!-- End Card with header and footer -->
 
           <!-- Card with header and footer -->
           <div class="card col-md-4 ms-3 mt-2">
             <div class="card-header">Payment Information</div>
-            <div class="card-body">
+            <div class="card-body"> 
+
+              <form action="" v-if="editingPayment"> 
+                <input v-model="order.payMethod" type="text" class="form-control my-1" >
+                <input v-model="order.customerAccount" type="text" class="form-control my-1" >
+                <input v-model="order.payNumber" type="text" class="form-control my-1">
+                <input v-model="order.tnxId" type="text" class="form-control my-1">
+                <input v-model="order.amount" type="text" class="form-control my-1"> 
+                <button type="button" 
+                        class="btn btn-warning my-1 w-100" 
+                        v-on:click="orderUpdate">Update</button>
+            </form>
+
+            <div class="pay-info-wrapper" v-else>
               <h5 class="card-title">{{ order.payMethod }}</h5>
               <table class="table">
                 <tr>
@@ -74,27 +93,18 @@
                   <td>{{ order.payNumber  }}</td> <td>-To</td>
                 </tr>
                 <tr>
-                  <td>{{ order.tnxId }}</td> <td>-tnx</td>
+                  <td>{{ order.tnxId }}</td> <td>-tnxId</td>
                 </tr>
                 <tr>
                  <td> ৳. {{ order.amount }}</td> <td>-amount</td> 
                 </tr>
-              </table>
-
-
-              <form action="" >
-                <input v-model="customer.customerName" type="text" class="form-control my-1" >
-                <input v-model="customer.phoneNumber" type="text" class="form-control my-1" >
-                <input v-model="customer.email" type="text" class="form-control my-1" >
-                <input v-model="customer.addressLine" type="text" class="form-control my-1">
-                <input v-model="customer.district" type="text" class="form-control my-1">
-                <input v-model="customer.division" type="text" class="form-control my-1"> 
-                <button class="btn btn-warning my-1 w-100">Update</button>
-            </form>
+              </table> 
+            </div>
                  
             </div>
             <div class="card-footer">
-              <a href="#">Edit</a>
+              <a href="#" v-if="!editingPayment" v-on:click="paymentEditButton">Edit</a>
+              <a href="#" v-else v-on:click="paymentEditButton">Back</a>
             </div>
           </div><!-- End Card with header and footer -->
           <!-- Card with header and footer -->
@@ -130,6 +140,32 @@
                   <th>Price </th>
                   <th>Total </th>
                 </tr>
+
+
+
+                <tr>
+                  <td>
+                    <input v-model="order.productName" type="text" class="form-control" name="" id="">
+                  </td>
+                 
+                  <td>
+                    <input v-model="order.variant" type="text" class="form-control" name="" id="">
+                  </td>
+                  
+                  <td>
+                    <input v-model="order.color" type="text" class="form-control" name="" id="">
+                  </td>
+                  <td>
+                    <input v-model="order.qty" type="text" class="form-control" name="" id="">
+                  </td>
+                  <td>
+                    <input v-model="order.price" type="text" class="form-control" name="" id="">
+                  </td>  
+                </tr>
+
+
+
+
                 <tr>
                   <td>
                     <h5 class="card-title">{{ order.productName }}</h5>
@@ -139,6 +175,7 @@
                   <td> {{ order.price }}</td>
                   <td> {{ order.price*order.qty }}</td>
                 </tr>
+               
 
 
               </table>
@@ -153,7 +190,7 @@
 
             </div>
             <div class="card-footer">
-              Edit 
+              
             </div>
           </div><!-- End Card with header and footer -->  
           
@@ -164,9 +201,9 @@
   </main>
 </template>
 
-<script>
+<script> 
+import axiosPrivetService from '../../my-services/axiosPrivetService'
 
-import {axiosPrivet} from '../../my-services/axiosInstance';
 
 export default {
     data:()=>({
@@ -174,6 +211,8 @@ export default {
         order:'',
         customer: '',
         gettingInfo: true,
+        editingPayment:false,
+        editingCustomerInfo: false,
     }),
 
     mounted(){
@@ -187,7 +226,7 @@ export default {
     methods:{
         getOrderDetails(){
           this.gettingInfo = true;
-            axiosPrivet.get('get-order-details/'+this.orderId)
+          axiosPrivetService.getOrderDetails(this.orderId) 
             .then((res)=>{
                 console.log(res);
                 this.order = res.data;
@@ -195,8 +234,27 @@ export default {
                 this.gettingInfo= false;
             })
             .catch((err)=>{
-                console.log(err);
+                console.log(err); 
             })
+        },
+        paymentEditButton(){
+          this.editingPayment = !this.editingPayment;
+        },
+        customerInfoEditBtn(){
+          this.editingCustomerInfo = !this.editingCustomerInfo;
+        },
+        orderUpdate(){
+          this.order.customerInfo = this.customer;
+          axiosPrivetService.orderUpdate(this.order) 
+          .then((res)=>{
+              // console.log(res);
+              toastr.success(res.data.message,'Success');
+              this.editingPayment = false;
+              this.editingCustomerInfo = false;
+          })
+          .catch((err)=>{
+              console.log(err);
+          })
         }
     }
 

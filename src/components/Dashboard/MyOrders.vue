@@ -72,8 +72,8 @@
   </main>
 </template>
 
-<script> 
-import {axiosPrivet} from "../../my-services/axiosInstance"; 
+<script>  
+import axiosPrivetService from "../../my-services/axiosPrivetService";
 
 export default { 
   mounted() {
@@ -95,7 +95,7 @@ export default {
   methods:{
     getOrdersCollection(){
         this.gettingOrders = true;
-      axiosPrivet.get('get-form-orders')
+      axiosPrivetService.getOrders()
       .then((res)=>{
         this.orders = res.data.data;
           console.log(res.data.data);

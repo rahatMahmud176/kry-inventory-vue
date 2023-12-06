@@ -33,7 +33,7 @@
 
       <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
         <li class="dropdown-header"> 
-            <router-link to="branch-register">
+            <router-link to="/branch-register">
               Register a Branch
             </router-link> 
         </li>
